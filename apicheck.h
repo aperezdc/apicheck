@@ -28,12 +28,14 @@
 
 #define api_check_return_val(expr, val) do { \
         if (!(expr)) { \
-            fprintf (API_CHECK_OUTPUT_FILE, \
+            FILE* __api_check_output_ ## __LINE__ = (API_CHECK_OUTPUT_FILE); \
+            if (!__api_check_output_ ## __LINE__) \
+                __api_check_output_ ## __LINE__ = stderr; \
+            fprintf (__api_check_output_ ## __LINE__, \
                      "API check '%s' failed at %s (%s:%d)\n", \
                      #expr, __func__, __FILE__, __LINE__); \
-            fflush (API_CHECK_OUTPUT_FILE); \
-            if (API_CHECK_SHOULD_ABORT) \
-                abort (); \
+            fflush (__api_check_output_ ## __LINE__); \
+            if (!!(API_CHECK_SHOULD_ABORT)) abort (); \
             return val; \
         } \
     } while (0)
