@@ -19,6 +19,13 @@
 #define API_CHECK_SHOULD_ABORT 0
 #endif /* !API_CHECK_SHOULD_ABORT */
 
+#if defined(API_CHECK_DISABLE) && API_CHECK_DISABLE
+
+#define api_check_return(expr)          ((void) (expr))
+#define api_check_return_val(expr, val) ((void) (expr), (void) (val))
+
+#else
+
 #define api_check_return_val(expr, val) do { \
         if (!(expr)) { \
             fprintf (API_CHECK_OUTPUT_FILE, \
@@ -32,5 +39,7 @@
     } while (0)
 
 #define api_check_return(expr) api_check_return_val(expr,)
+
+#endif /* API_CHECK_DISABLE */
 
 #endif /* !APICHECK_H */
